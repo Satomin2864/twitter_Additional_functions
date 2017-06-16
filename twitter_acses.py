@@ -5,7 +5,7 @@ import csv
 import urllib.request
 import re
 import sys
-
+import time
 #import cv2
 #import numpy as np
 twitter = OAuth1Session(settings.CONSUMER_KEY, settings.CONSUMER_SECRET, settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
@@ -27,7 +27,6 @@ def get_icon():
 
 def tweet(word):
     # status key に 関連付けた単語をツイート
-    params = {"status":word}
     req = twitter.post("https://api.twitter.com/1.1/statuses/update.json",params = params)
 def follow(sc_name):
     # 指定したアカウントをフォローする
@@ -108,14 +107,25 @@ def url_delete(tweet_list):
     return url_delete_tweet_list
 
 
-def write_csv(tweet):
+def write_csv(tweet_list):
     with open("mamayu_tweet.csv","w") as f:
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow(tweet)
+        writer.writerow(tweet_list)
+
+def write2_csv(tweet_list):
+    with open("mamayu_tweet.csv","a") as f:
+        writer = csv.writer(f, lineterminator='\n')
+        writer.writerow(tweet_list)
 
 if __name__ == '__main__':
     ward = sys.argv[1]
     tweet_list = get_target_ward(ward)
     tweet_list = url_delete(tweet_list)
-    #print(tweet_list)
     write_csv(tweet_list)
+    time.sleep(5)
+
+    while True:
+        tweet_list = get_target_ward(ward)
+        tweet_list = url_delete(tweet_list)
+        write2_csv(tweet_list)
+        time.sleep(5)
