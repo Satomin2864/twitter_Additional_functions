@@ -4,6 +4,7 @@ import settings
 import csv
 import urllib.request
 import re
+import sys
 
 #import cv2
 #import numpy as np
@@ -80,9 +81,9 @@ def get_line():
     for tweet in timeline:
         print(tweet["text"])
 
-def get_target_ward():
+def get_target_ward(ward):
     url = "https://api.twitter.com/1.1/search/tweets.json"
-    params = {'q':'佐久間まゆ',
+    params = {'q':ward,
               'count':100
           }
     req = twitter.get(url, params = params)
@@ -97,13 +98,24 @@ def get_target_ward():
         print(tweet)
 
     return tweet_list
-#def wirte_csv
 
+# ツイートからURLを削除
 def url_delete(tweet_list):
+    url_delete_tweet_list = []
     for text in tweet_list:
         text=re.sub(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-…]+', "", text)
-        print(text)
+        url_delete_tweet_list.append(text)
+    return url_delete_tweet_list
+
+
+def write_csv(tweet):
+    with open("mamayu_tweet.csv","w") as f:
+        writer = csv.writer(f, lineterminator='\n')
+        writer.writerow(tweet)
 
 if __name__ == '__main__':
-    tweet_list = get_target_ward()
+    ward = sys.argv[1]
+    tweet_list = get_target_ward(ward)
     tweet_list = url_delete(tweet_list)
+    #print(tweet_list)
+    write_csv(tweet_list)
