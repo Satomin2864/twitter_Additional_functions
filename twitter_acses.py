@@ -3,6 +3,8 @@ import json
 import settings
 import csv
 import urllib.request
+import re
+
 #import cv2
 #import numpy as np
 twitter = OAuth1Session(settings.CONSUMER_KEY, settings.CONSUMER_SECRET, settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
@@ -93,8 +95,15 @@ def get_target_ward():
     tweet_list = list(set(tweet_list))
     for tweet in tweet_list:
         print(tweet)
+
+    return tweet_list
 #def wirte_csv
 
-    req = twitter.get(url, params = params)
+def url_delete(tweet_list):
+    for text in tweet_list:
+        text=re.sub(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-…]+', "", text)
+        print(text)
+
 if __name__ == '__main__':
-    get_target_ward()
+    tweet_list = get_target_ward()
+    tweet_list = url_delete(tweet_list)
